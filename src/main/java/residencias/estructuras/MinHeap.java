@@ -121,6 +121,22 @@ public class MinHeap<T extends Comparable<T>> { // <T extends Comparable<T>> ase
         siftUp(size); // Restaura la propiedad del heap desde el nuevo elemento
         size++;       // Incrementa el tamaño
     }
+    /**
+     * Elimina un elemento al heap y mantiene la propiedad del min-heap.
+     * @param element El elemento a agregar.
+     */
+    public boolean remove (T element) {
+        for (int i = 0; i < size; i++){
+            if(elements[i].equals(element)){
+                elements[i] = elements[i - 1]; //Utiliza el ultimo
+                size--; //Disminuye tamaño
+                siftDown(i);
+                siftUp(i);
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Elimina y retorna el elemento mínimo (la raíz) del heap.
