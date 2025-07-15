@@ -1,5 +1,7 @@
 package residencias.estructuras;
 
+import java.util.LinkedList;
+
 public class HashTable <K, V> {
     private static class Entrada <K, V>{
         K key;
@@ -84,6 +86,19 @@ public class HashTable <K, V> {
     }
     public boolean hasKey (K key){
         return find (key) != null;
+    }
+
+    //Para devolver todos los elementos
+    public LinkedList<V> values() {
+        LinkedList<V> lista = new LinkedList<>();
+        for (int i = 0; i < cap; i++) {
+            Entrada<K, V> curr = tabla[i];
+            while (curr != null) {
+                lista.add(curr.valor);
+                curr = curr.next;
+            }
+        }
+        return lista;
     }
 
     public void print() {
