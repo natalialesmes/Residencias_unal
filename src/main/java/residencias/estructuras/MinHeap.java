@@ -128,7 +128,7 @@ public class MinHeap<T extends Comparable<T>> { // <T extends Comparable<T>> ase
     public boolean remove (T element) {
         for (int i = 0; i < size; i++){
             if(elements[i].equals(element)){
-                elements[i] = elements[i - 1]; //Utiliza el ultimo
+                elements[i] = elements[size - 1]; //Utiliza el ultimo
                 size--; //Disminuye tamaño
                 siftDown(i);
                 siftUp(i);
