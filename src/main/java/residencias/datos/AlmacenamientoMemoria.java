@@ -1,4 +1,10 @@
 package residencias.datos;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import residencias.estructuras.Estudiante;
+
 //Almacenar los datos en RAM
 public class AlmacenamientoMemoria {
     private List<Estudiante> estudiantes;

@@ -63,7 +63,7 @@ public class GestorEstudiantes {
 
     //ASIGNAR residencias a estudiantes con menores puntajes
     public int asignarRes (){
-        LinkedList <Estudiante> ests = tabla.valores();
+        LinkedList <Estudiante> ests = tabla.values();
         ests.sort(Estudiante::compareTo); //Pasa menor puntaje primero
 
         int asigna = 0;
@@ -80,7 +80,7 @@ public class GestorEstudiantes {
 
     //Puntajes por orden
     public LinkedList <Estudiante> ordenados (){
-        LinkedList <Estudiante> lista = tabla.valores();
+        LinkedList <Estudiante> lista = tabla.values();
         lista.sort(Estudiante::compareTo);
         return lista;
     }
@@ -88,7 +88,7 @@ public class GestorEstudiantes {
     //Obtener estudiantes asignados
     public LinkedList <Estudiante> asignados (){
         LinkedList <Estudiante> asignados = new LinkedList <> (); //Nueva lista con los asignados
-        LinkedList <Estudiante> lista = tabla.valores(); //Guarda valores de la tabla
+        LinkedList <Estudiante> lista = tabla.values(); //Guarda valores de la tabla
         for (int i = 0; i < lista.size(); i++){
             Estudiante n = lista.get(i);
             if(n.getResidente()){
@@ -101,7 +101,7 @@ public class GestorEstudiantes {
     //Obtener estudiantes no asignados
     public LinkedList <Estudiante> noAsignados(){
         LinkedList <Estudiante> noasig = new LinkedList <>(); //Nueva lista con los no asignados
-        LinkedList <Estudiante> lista = tabla.valores(); //Guarda valores de la tabla
+        LinkedList <Estudiante> lista = tabla.values(); //Guarda valores de la tabla
         for (int i = 0; i < lista.size(); i ++){
             Estudiante n = lista.get(i);
             if(!n.getResidente()){ //El estudiante no es residente;
