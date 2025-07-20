@@ -1,3 +1,4 @@
+package residencias.estructuras;
 import residencias.estructuras.Estudiante;
 import residencias.estructuras.HashTable;
 import java.util.*;
