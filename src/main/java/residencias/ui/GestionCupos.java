@@ -2,6 +2,7 @@ package residencias.ui;
 
 //Panel para administrar los cupos de las residencias
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
@@ -22,7 +23,7 @@ public class GestionCupos extends JFrame {
 
         setTitle("Gestión de Cupos");
         setSize(350, 150);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new FlowLayout());
 
         add(new JLabel("Cupos disponibles:"));
@@ -40,15 +41,19 @@ public class GestionCupos extends JFrame {
                 int cupos = Integer.parseInt(campoCupos.getText());
                 if (cupos < 0) {
                     lblEstado.setText("Ingrese un número positivo.");
+                    lblEstado.setForeground(Color.RED);
                 } else {
                     gestor.asignarcupo(cupos);
                     lblEstado.setText("Cupos asignados: " + cupos);
+                    lblEstado.setForeground(Color.GREEN);
+                    campoCupos.setText(""); // Limpiar el campo de texto
                 }
             } catch (NumberFormatException ex) {
                 lblEstado.setText("Ingrese un número válido.");
             }
         });
     }
+    
     
             public static void main(String[] args) {
                 GestorEstudiantes gestor = new GestorEstudiantes();
