@@ -8,10 +8,10 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         setTitle("Sistema de Residencias UNAL");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 500);
+        setSize(600, 400);
         setLocationRelativeTo(null);
 
-        // Panel principal con GridLayout horizontal
+        // Panel principal
         JPanel mainPanel = new JPanel(new GridLayout(1, 2));
         add(mainPanel);
 
@@ -19,21 +19,22 @@ public class MainFrame extends JFrame {
         RegistroEstudiantes registroPanel = new RegistroEstudiantes();
         mainPanel.add(registroPanel);
 
-        // Panel derecho: Información general o estado
-        JTextArea areaInfo = new JTextArea();
-        areaInfo.setText("📚 Bienvenido al sistema de residencias.\n\nUtilice el formulario para registrar estudiantes y gestionar su asignación a habitaciones.");
-        areaInfo.setWrapStyleWord(true);
-        areaInfo.setLineWrap(true);
-        areaInfo.setEditable(false);
-        areaInfo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        areaInfo.setMargin(new Insets(10, 10, 10, 10));
+        // Panel derecho: Información estática (Mockup)
+        JTextArea mockupInfo = new JTextArea();
+        mockupInfo.setText("Bienvenido al sistema. Use el menú izquierdo para gestionar estudiantes.");
+        mockupInfo.setLineWrap(true);
+        mockupInfo.setWrapStyleWord(true);
+        mockupInfo.setEditable(false);
+        mockupInfo.setMargin(new Insets(10, 10, 10, 10));
+        mockupInfo.setFont(new Font("Serif", Font.PLAIN, 14));
 
-        JScrollPane scrollPane = new JScrollPane(areaInfo);
+        JScrollPane scrollPane = new JScrollPane(mockupInfo);
         mainPanel.add(scrollPane);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
+        SwingUtilities.invokeLater(() -> {
+            new MainFrame().setVisible(true);
+        });
     }
 }
-
