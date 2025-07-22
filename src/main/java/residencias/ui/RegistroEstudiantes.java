@@ -4,82 +4,118 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import residencias.logica.GestorResidencias;
+import java.util.PriorityQueue;
 
 public class RegistroEstudiantes extends JPanel {
 
     private JTextField campoNombre;
     private JTextField campoCodigo;
-    private JComboBox<String> comboPrioridad;
-    private GestorResidencias gestor;
+    private JTextField campoPromedio;
+    private JTextArea areaResultado;
+
+    // Lógica simple incorporada: usamos un MinHeap basado en promedio
+    private PriorityQueue<Estudiante> minHeap;
 
     public RegistroEstudiantes() {
-        gestor = new GestorResidencias(); // clase lógica que controla la estructura (por ejemplo, MinHeap)
-
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder("Registro de Estudiantes"));
+        setBackground(new Color(240, 248, 255));
 
-        JPanel formulario = new JPanel(new GridLayout(6, 1, 10, 10));
-        formulario.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Inicializar MinHeap (por promedio)
+        minHeap = new PriorityQueue<>();
+
+        JPanel panelFormulario = new JPanel(new GridLayout(4, 2, 10, 10));
+        panelFormulario.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+        panelFormulario.setBackground(new Color(240, 248, 255));
 
         campoNombre = new JTextField();
         campoCodigo = new JTextField();
-        comboPrioridad = new JComboBox<>(new String[]{"Alta", "Media", "Baja"});
+        campoPromedio = new JTextField();
 
-        formulario.add(new JLabel("Nombre del estudiante:"));
-        formulario.add(campoNombre);
+        panelFormulario.add(new JLabel("Nombre:"));
+        panelFormulario.add(campoNombre);
 
-        formulario.add(new JLabel("Código del estudiante:"));
-        formulario.add(campoCodigo);
+        panelFormulario.add(new JLabel("Código:"));
+        panelFormulario.add(campoCodigo);
 
-        formulario.add(new JLabel("Prioridad de ingreso:"));
-        formulario.add(comboPrioridad);
+        panelFormulario.add(new JLabel("Promedio:"));
+        panelFormulario.add(campoPromedio);
 
-        add(formulario, BorderLayout.CENTER);
-
-        JButton botonRegistrar = new JButton("Registrar");
-        botonRegistrar.setBackground(new Color(34, 139, 34));
-        botonRegistrar.setForeground(Color.WHITE);
-        botonRegistrar.setFont(new Font("Segoe UI", Font.BOLD, 14));
-
-        botonRegistrar.addActionListener(new ActionListener() {
+        JButton btnAgregar = new JButton("Agregar Estudiante");
+        btnAgregar.setBackground(new Color(100, 149, 237));
+        btnAgregar.setForeground(Color.WHITE);
+        btnAgregar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                registrarEstudiante();
+                agregarEstudiante();
             }
         });
 
-        add(botonRegistrar, BorderLayout.SOUTH);
+        panelFormulario.add(btnAgregar);
+
+        add(panelFormulario, BorderLayout.NORTH);
+
+        areaResultado = new JTextArea();
+        areaResultado.setEditable(false);
+        areaResultado.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        areaResultado.setMargin(new Insets(10, 10, 10, 10));
+        JScrollPane scroll = new JScrollPane(areaResultado);
+
+        add(scroll, BorderLayout.CENTER);
     }
 
-    private void registrarEstudiante() {
-        String nombre = campoNombre.getText().trim();
-        String codigo = campoCodigo.getText().trim();
-        String prioridadStr = (String) comboPrioridad.getSelectedItem();
-        int prioridad;
+    private void agregarEstudiante() {
+        String nombre = campoNombre.getText();
+        String codigo = campoCodigo.getText();
+        double promedio;
 
-        switch (prioridadStr) {
-            case "Alta": prioridad = 1; break;
-            case "Media": prioridad = 2; break;
-            case "Baja": prioridad = 3; break;
-            default: prioridad = 4;
-        }
+        try {
+            promedio = Double.parseDouble(campoPromedio.getText());
 
-        if (nombre.isEmpty() || codigo.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Por favor complete todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+            if (nombre.isEmpty() || codigo.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-        boolean exito = gestor.agregarEstudiante(nombre, codigo, prioridad);
+            Estudiante estudiante = new Estudiante(nombre, codigo, promedio);
+            minHeap.add(estudiante);
+            actualizarAreaResultado();
 
-        if (exito) {
-            JOptionPane.showMessageDialog(this, "Estudiante registrado correctamente.");
             campoNombre.setText("");
             campoCodigo.setText("");
-            comboPrioridad.setSelectedIndex(0);
-        } else {
-            JOptionPane.showMessageDialog(this, "Ya existe un estudiante con ese código.", "Error", JOptionPane.WARNING_MESSAGE);
+            campoPromedio.setText("");
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Promedio inválido. Debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void actualizarAreaResultado() {
+        StringBuilder sb = new StringBuilder();
+        PriorityQueue<Estudiante> copia = new PriorityQueue<>(minHeap);
+
+        sb.append("Estudiantes registrados (ordenados por menor promedio):\n\n");
+        while (!copia.isEmpty()) {
+            Estudiante e = copia.poll();
+            sb.append(String.format("Nombre: %-15s Código: %-10s Promedio: %.2f\n", e.nombre, e.codigo, e.promedio));
+        }
+
+        areaResultado.setText(sb.toString());
+    }
+
+    // Clase interna para representar estudiantes
+    private static class Estudiante implements Comparable<Estudiante> {
+        String nombre;
+        String codigo;
+        double promedio;
+
+        public Estudiante(String nombre, String codigo, double promedio) {
+            this.nombre = nombre;
+            this.codigo = codigo;
+            this.promedio = promedio;
+        }
+
+        @Override
+        public int compareTo(Estudiante otro) {
+            return Double.compare(this.promedio, otro.promedio); // Orden ascendente por promedio
         }
     }
 }
