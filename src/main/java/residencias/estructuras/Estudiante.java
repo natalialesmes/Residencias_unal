@@ -36,6 +36,9 @@ public class Estudiante implements Comparable<Estudiante> {
     public void darResidencia (){
         this.residente = true;
     }
+        public void revocarResidencia() {
+        this.residente = false;
+    }
 
     @Override
     public int compareTo (Estudiante otro){
