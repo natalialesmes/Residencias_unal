@@ -14,7 +14,7 @@ class NodoAVL {
     }
 }
 
-public class AVLResidencias {
+public class AVL {
     private NodoAVL raiz;
     private HashTable<String, Estudiante> mapaEstudiantes = new HashTable<>();
 
