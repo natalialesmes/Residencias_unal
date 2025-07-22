@@ -1,5 +1,6 @@
 package residencias.util;
 
+import residencias.datos.AlmacenamientoArchivos;
 import residencias.estructuras.Estudiante;
 import residencias.estructuras.MinHeap;
 
@@ -44,6 +45,11 @@ public class AnalisisRendimiento {
         for (int size = startSize; size <= endSize; size += increment) {
             final int currentSize = size;
             System.out.println("\n---" + size + " estudiantes ---");
+
+            // Generar y persistir estudiantes
+            LinkedList<Estudiante> estudiantes = generarEstudiantes(currentSize);
+            AlmacenamientoArchivos archivos = new AlmacenamientoArchivos();
+            archivos.guardarEnCsv(estudiantes); // Persistencia opcional en tiempo de ejecución
 
             // Test Insert
             runPerformanceTest(
