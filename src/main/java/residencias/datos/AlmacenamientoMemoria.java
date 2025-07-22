@@ -7,18 +7,12 @@ import residencias.estructuras.Estudiante;
 
 //Almacenar los datos en RAM
 public class AlmacenamientoMemoria {
-    private List<Estudiante> estudiantes;
-
-    public AlmacenamientoMemoria() {
-        estudiantes = new ArrayList<>();
-    }
+    private final List<Estudiante> estudiantes = new ArrayList<>();
 
     public boolean agregarEstudiante(Estudiante e) {
-        if (buscarPorId(e.getId()) == null) {
-            estudiantes.add(e);
-            return true;
-        }
-        return false; // Ya existe un estudiante con ese ID
+        if (e == null || buscarPorId(e.getId()) != null) return false;
+        estudiantes.add(e);
+        return true;
     }
 
     public boolean eliminarEstudiantePorId(String id) {
@@ -31,9 +25,7 @@ public class AlmacenamientoMemoria {
 
     public Estudiante buscarPorId(String id) {
         for (Estudiante e : estudiantes) {
-            if (e.getId().equals(id)) {
-                return e;
-            }
+            if (e.getId().equals(id)) return e;
         }
         return null;
     }
