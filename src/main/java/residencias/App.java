@@ -1,16 +1,14 @@
 package residencias;
 
-import javax.swing.SwingUtilities;
-
 import residencias.ui.MainFrame;
 
-//Main, desde aqui se llamara el MainFrame
+import javax.swing.*;
+
 public class App {
     public static void main(String[] args) {
-
         SwingUtilities.invokeLater(() -> {
-            MainFrame mainFrame = new MainFrame();
-            mainFrame.setVisible(true);
+            MainFrame frame = new MainFrame();
+            frame.setVisible(true);
         });
     }
 }
