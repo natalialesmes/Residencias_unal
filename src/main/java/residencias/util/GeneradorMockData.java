@@ -21,7 +21,7 @@ public class GeneradorMockData {
 
     // 🎲 Genera un ID único a partir de un número
     private static String generarIdUnico(int i) {
-        return "ID" + (1000 + i);
+        return "" + (1000 + i);
     }
 
     // 👥 Genera un nombre aleatorio

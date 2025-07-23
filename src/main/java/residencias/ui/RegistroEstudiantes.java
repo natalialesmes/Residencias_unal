@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static residencias.util.GeneradorMockData.generarEstudiantes;
+
 public class RegistroEstudiantes extends JPanel {
 
     private JTextField campoNombre;
@@ -17,13 +19,15 @@ public class RegistroEstudiantes extends JPanel {
     private GestorEstudiantes gestor;
 
     public RegistroEstudiantes() {
+
         this.setLayout(new BorderLayout());
         this.setBackground(Color.WHITE);
+        this.setBorder(BorderFactory.createTitledBorder("Registro de Estudiantes")); // Add a title border
 
         gestor = new GestorEstudiantes();
 
         JPanel panelFormulario = new JPanel(new GridLayout(4, 2, 10, 10));
-        panelFormulario.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+        panelFormulario.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20)); // Add padding
 
         campoNombre = new JTextField();
         campoId = new JTextField();
@@ -54,6 +58,10 @@ public class RegistroEstudiantes extends JPanel {
         JScrollPane scroll = new JScrollPane(areaResultado);
 
         this.add(scroll, BorderLayout.CENTER);
+
+
+        GenEstudiantes();
+        actualizarTexto();
     }
 
     private void agregarEstudiante() {
@@ -99,5 +107,10 @@ public class RegistroEstudiantes extends JPanel {
     public GestorEstudiantes getGestor() {
         return gestor;
     }
-}
+    public void GenEstudiantes() {
+        for (Estudiante est : generarEstudiantes(10)) {
+            gestor.registro(est.getId(), est.getNombre(), est.getPuntaje());
+        }
 
+    }
+}
