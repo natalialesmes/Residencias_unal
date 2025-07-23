@@ -39,6 +39,7 @@ Este sistema permite gestionar solicitudes de residencia por parte de estudiante
 |------------|----------------------|--------------------------------------------------------------------|
 | `HashMap`  | Acceso rápido por ID | Permite buscar, actualizar o eliminar estudiantes instantáneamente |
 | `MinHeap`  | Asignación de cupos  | Extrae al estudiante de menor puntaje socioeconómico               |
+| `AVL`  | Modificación de puntaje  | Reorganiza los puntajes que se modifiquen para mantener una complejidad capetable               |
 
 
 
