@@ -19,7 +19,7 @@ public class AlmacenamientoArchivos {
 
 
     // 🗂️ Guardar estudiantes en CSV
-    public boolean guardarEnCsv(List<Estudiante> estudiantes) {
+    public boolean guardar(List<Estudiante> estudiantes) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(ARCHIVO_CSV))) {
             for (Estudiante e : estudiantes) {
                 writer.printf("%s,%s,%d,%s%n",
