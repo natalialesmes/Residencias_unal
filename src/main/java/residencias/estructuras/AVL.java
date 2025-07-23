@@ -22,141 +22,98 @@ public class AVL {
     }
 
     private int balance(NodoAVL nodo) {
-        if (nodo == null) {
-            return 0;
+    if (nodo == null) {
+        return 0;
         }
-        return altura(nodo.izquierda) - altura(nodo.derecha);
-    }
-
-    private void actualizarAltura(NodoAVL nodo) {
-        if (nodo != null) {
-            nodo.altura = 1 + Math.max(altura(nodo.izquierda), altura(nodo.derecha));
-        }
+    return altura(nodo.izquierda) - altura(nodo.derecha);
     }
 
     private NodoAVL rotarDerecha(NodoAVL y) {
         NodoAVL x = y.izquierda;
         NodoAVL T2 = x.derecha;
-
-        // Realizar rotación
         x.derecha = y;
         y.izquierda = T2;
-
-        // Actualizar alturas
-        actualizarAltura(y);
-        actualizarAltura(x);
-
-        return x; // Nueva raíz de este subárbol
+        y.altura = Math.max(altura(y.izquierda), altura(y.derecha)) + 1;
+        x.altura = Math.max(altura(x.izquierda), altura(x.derecha)) + 1;
+        return x;
     }
 
     private NodoAVL rotarIzquierda(NodoAVL x) {
         NodoAVL y = x.derecha;
         NodoAVL T2 = y.izquierda;
-
-        // Realizar rotación
         y.izquierda = x;
         x.derecha = T2;
-
-        // Actualizar alturas
-        actualizarAltura(x);
-        actualizarAltura(y);
-
-        return y; // Nueva raíz de este subárbol
+        x.altura = Math.max(altura(x.izquierda), altura(x.derecha)) + 1;
+        y.altura = Math.max(altura(y.izquierda), altura(y.derecha)) + 1;
+        return y;
     }
 
     public void insertar(Estudiante est) {
         raiz = insertar(raiz, est);
-        mapaEstudiantes.add(est.getId(), est); // Asegúrate de que el ID es único en el mapa
+        mapaEstudiantes.add(est.getId(), est);
     }
 
     private NodoAVL insertar(NodoAVL nodo, Estudiante est) {
         if (nodo == null) return new NodoAVL(est);
 
-
-        int comparacionPuntaje = Integer.compare(est.getPuntaje(), nodo.estudiante.getPuntaje());
-
-        if (comparacionPuntaje < 0) { // est.puntaje < nodo.estudiante.puntaje
+        if (est.getPuntaje() < nodo.estudiante.getPuntaje())
             nodo.izquierda = insertar(nodo.izquierda, est);
-        } else if (comparacionPuntaje > 0) { // est.puntaje > nodo.estudiante.puntaje
+        else
             nodo.derecha = insertar(nodo.derecha, est);
-        } else {
-            int comparacionID = est.getId().compareTo(nodo.estudiante.getId());
-            if (comparacionID < 0) {
-                nodo.izquierda = insertar(nodo.izquierda, est);
-            } else if (comparacionID > 0) {
-                nodo.derecha = insertar(nodo.derecha, est);
-            } else {
 
-                return nodo;
-            }
-        }
-
-        actualizarAltura(nodo); // Actualizar altura después de la inserción
-
+        nodo.altura = 1 + Math.max(altura(nodo.izquierda), altura(nodo.derecha));
         int balance = balance(nodo);
 
-        // Rotaciones basadas en el balance
-        // Caso Izquierda-Izquierda
-        if (balance > 1 && balance(nodo.izquierda) >= 0) // est.getPuntaje() < nodo.izquierda.estudiante.getPuntaje()
+        if (balance > 1 && est.getPuntaje() < nodo.izquierda.estudiante.getPuntaje())
             return rotarDerecha(nodo);
-
-        // Caso Derecha-Derecha
-        if (balance < -1 && balance(nodo.derecha) <= 0) // est.getPuntaje() > nodo.derecha.estudiante.getPuntaje()
+        if (balance < -1 && est.getPuntaje() > nodo.derecha.estudiante.getPuntaje())
             return rotarIzquierda(nodo);
-
-        // Caso Izquierda-Derecha
-        if (balance > 1 && balance(nodo.izquierda) < 0) { // est.getPuntaje() > nodo.izquierda.estudiante.getPuntaje()
+        if (balance > 1 && est.getPuntaje() > nodo.izquierda.estudiante.getPuntaje()) {
             nodo.izquierda = rotarIzquierda(nodo.izquierda);
             return rotarDerecha(nodo);
         }
-
-        // Caso Derecha-Izquierda
-        if (balance < -1 && balance(nodo.derecha) > 0) { // est.getPuntaje() < nodo.derecha.estudiante.getPuntaje()
+        if (balance < -1 && est.getPuntaje() < nodo.derecha.estudiante.getPuntaje()) {
             nodo.derecha = rotarDerecha(nodo.derecha);
             return rotarIzquierda(nodo);
         }
-
         return nodo;
     }
 
     public void eliminar(String id) {
         Estudiante est = mapaEstudiantes.find(id);
         if (est != null) {
-            raiz = eliminar(raiz, est.getPuntaje(), est.getId());
-            mapaEstudiantes.remove(id); 
+            raiz = eliminar(raiz, est.getPuntaje());
+            mapaEstudiantes.remove(id);
         }
     }
 
-    private NodoAVL eliminar(NodoAVL nodo, int puntaje, String id) {
+    private NodoAVL eliminar(NodoAVL nodo, int puntaje) {
         if (nodo == null) return nodo;
 
-        int comparacionPuntaje = Integer.compare(puntaje, nodo.estudiante.getPuntaje());
-
-        if (comparacionPuntaje < 0) {
-            nodo.izquierda = eliminar(nodo.izquierda, puntaje, id);
-        } else if (comparacionPuntaje > 0) {
-            nodo.derecha = eliminar(nodo.derecha, puntaje, id);
-        } else { 
-            if (nodo.estudiante.getId().equals(id)) { 
-
-                if (nodo.izquierda == null || nodo.derecha == null) {
-                    return (nodo.izquierda != null) ? nodo.izquierda : nodo.derecha; 
-                } else { 
-                    NodoAVL sucesor = minValorNodo(nodo.derecha);
-                    nodo.estudiante = sucesor.estudiante; 
-                    nodo.derecha = eliminar(nodo.derecha, sucesor.estudiante.getPuntaje(), sucesor.estudiante.getId());
+        if (puntaje < nodo.estudiante.getPuntaje())
+            nodo.izquierda = eliminar(nodo.izquierda, puntaje);
+        else if (puntaje > nodo.estudiante.getPuntaje())
+            nodo.derecha = eliminar(nodo.derecha, puntaje);
+        else {
+            if (nodo.izquierda == null || nodo.derecha == null) {
+                NodoAVL temp;
+                if (nodo.izquierda != null) {
+                    temp = nodo.izquierda;
+                } else {
+                    temp = nodo.derecha;
                 }
+                nodo = temp;
             } else {
-                nodo.derecha = eliminar(nodo.derecha, puntaje, id);
+                NodoAVL sucesor = minValorNodo(nodo.derecha);
+                nodo.estudiante = sucesor.estudiante;
+                nodo.derecha = eliminar(nodo.derecha, sucesor.estudiante.getPuntaje());
             }
         }
 
-        if (nodo == null) return nodo; 
+        if (nodo == null) return nodo;
 
-        actualizarAltura(nodo); 
-
+        nodo.altura = Math.max(altura(nodo.izquierda), altura(nodo.derecha)) + 1;
         int balance = balance(nodo);
-
 
         if (balance > 1 && balance(nodo.izquierda) >= 0)
             return rotarDerecha(nodo);
@@ -164,8 +121,6 @@ public class AVL {
             nodo.izquierda = rotarIzquierda(nodo.izquierda);
             return rotarDerecha(nodo);
         }
-
-        // Caso Derecha-Derecha o Derecha-Izquierda
         if (balance < -1 && balance(nodo.derecha) <= 0)
             return rotarIzquierda(nodo);
         if (balance < -1 && balance(nodo.derecha) > 0) {
@@ -177,7 +132,6 @@ public class AVL {
     }
 
     private NodoAVL minValorNodo(NodoAVL nodo) {
-        if (nodo == null) return null; 
         NodoAVL actual = nodo;
         while (actual.izquierda != null)
             actual = actual.izquierda;
@@ -213,12 +167,12 @@ public class AVL {
         List<Estudiante> ordenados = new ArrayList<>();
         recolectarEnOrden(raiz, ordenados);
         System.out.println("Estudiantes con residencia:");
-        for (int i = ordenados.size() - 1; i >= Math.max(0, ordenados.size() - cupos); i--) {
+        for (int i = 0; i < Math.min(cupos, ordenados.size()); i++) {
             ordenados.get(i).darResidencia();
             System.out.println(ordenados.get(i));
         }
-        System.out.println("\nEstudiantes sin residencia:");
-        for (int i = 0; i < Math.max(0, ordenados.size() - cupos); i++) {
+        System.out.println("Estudiantes sin residencia:");
+        for (int i = cupos; i < ordenados.size(); i++) {
             System.out.println(ordenados.get(i));
         }
     }
