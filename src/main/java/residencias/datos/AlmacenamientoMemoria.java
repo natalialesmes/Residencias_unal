@@ -6,33 +6,31 @@ import java.util.List;
 import residencias.estructuras.Estudiante;
 
 //Almacenar los datos en RAM
-public class AlmacenamientoMemoria implements IAlmacenamiento {
-    
-    private int cupos;
+public class AlmacenamientoMemoria {
     private final List<Estudiante> estudiantes = new ArrayList<>();
 
-    @Override
-    public void setCupos(int cupos) {
-        this.cupos = cupos;
+    public boolean agregarEstudiante(Estudiante e) {
+        if (e == null || buscarPorId(e.getId()) != null) return false;
+        estudiantes.add(e);
+        return true;
     }
 
-    @Override
-    public int getCupos() {
-        return cupos;
+    public boolean eliminarEstudiantePorId(String id) {
+        return estudiantes.removeIf(e -> e.getId().equals(id));
     }
 
-    @Override
-    public void agregarEstudiante(Estudiante estudiante) {
-        estudiantes.add(estudiante);
+    public List<Estudiante> obtenerTodos() {
+        return new ArrayList<>(estudiantes);
     }
 
-    @Override
-    public List<Estudiante> obtenerEstudiantes() {
-        return new ArrayList<>(estudiantes); // Devolver copia para no modificar directamente
+    public Estudiante buscarPorId(String id) {
+        for (Estudiante e : estudiantes) {
+            if (e.getId().equals(id)) return e;
+        }
+        return null;
     }
 
-    @Override
-    public void limpiarEstudiantes() {
-        estudiantes.clear();
+    public int cantidad() {
+        return estudiantes.size();
     }
 }

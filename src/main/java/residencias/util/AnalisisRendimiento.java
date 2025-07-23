@@ -11,10 +11,11 @@ import java.util.function.Supplier;
 
 import residencias.datos.AlmacenamientoArchivos;
 import residencias.estructuras.Estudiante;
+import residencias.estructuras.HashTable;
 import residencias.estructuras.MinHeap;
 import static residencias.util.GeneradorMockData.generarEstudiantes;
 
-//Analisar el rendimiento como en el Taller
+//Analizar el rendimiento como en el Taller
 public class AnalisisRendimiento {
 
     private static <TSetup> void runPerformanceTest(
@@ -46,8 +47,8 @@ public class AnalisisRendimiento {
 
     public static void main(String[] args) {
         int startSize = 100000;
-        int endSize = 100000;
-        int increment = 1000;
+        int endSize = 1200000;
+        int increment = 100000;
 
         System.out.println("Tamaño inicial: " + startSize + ", Tamaño final: " + endSize + ", Incremento: " + increment);
 
@@ -61,86 +62,150 @@ public class AnalisisRendimiento {
             archivos.guardar(estudiantes); // Persistencia opcional en tiempo de ejecución
 
             // Test Insert
+//            runPerformanceTest(
+//                    "INSERCIÓN",
+//                    size,
+//                    () -> { // Setup: Crear estudiantes
+//                        return generarEstudiantes(currentSize);
+//                    },
+//                    (studentsToInsert) -> { // Operation: Insertar estudiantes en el heap
+//                        MinHeap<Estudiante> heap = new MinHeap<>();
+//                        for (Estudiante est : studentsToInsert) {
+//                            heap.insert(est);
+//                        }
+//                    }
+//            );
+//
+//            // Test ExtractMin
+//            runPerformanceTest(
+//                    "EXTRAER MIN",
+//                    size,
+//                    () -> { // Setup
+//                        MinHeap<Estudiante> heap = new MinHeap<>();
+//                        for (Estudiante est : generarEstudiantes(currentSize)) {
+//                            heap.insert(est);
+//                        }
+//                        return heap; // Retornar el heap con los elementos
+//                    },
+//                    (heapToExtract) -> { // Extraer
+//                        while (!heapToExtract.isEmpty()) {
+//                            heapToExtract.extractMin();
+//                        }
+//                    }
+//            );
+//
+//            // Test PeekMin
+//            runPerformanceTest(
+//                    "PEEK MIN",
+//                    size,
+//                    () -> { // Setup
+//                        MinHeap<Estudiante> heap = new MinHeap<>();
+//                        for (Estudiante est : generarEstudiantes(currentSize)) {
+//                            heap.insert(est);
+//                        }
+//                        return heap; // Retornar el heap con los elementos
+//                    },
+//                    (heapToPeek) -> { //Hacer el peek
+//                        for (int k = 0; k < currentSize; k++) { // Hacer n peeks aunque sean redundantes
+//                            heapToPeek.peekMin();
+//                        }
+//                    }
+//            );
+//
+//
+//
+//            // Test Remove
+//            runPerformanceTest(
+//                    "ELIMINAR",
+//                    currentSize,
+//                    () -> { // Setup: Crear estudiantes
+//                        MinHeap<Estudiante> heap = new MinHeap<>();
+//                        LinkedList<Estudiante> allStudents = generarEstudiantes(currentSize); // Todos los estudiantes
+//
+//                        // insertar los estudiantes
+//                        for (Estudiante est : allStudents) {
+//                            heap.insert(est);
+//                        }
+//
+//                        LinkedList<Estudiante> studentsToRemoveInOrder = new LinkedList<>(allStudents);
+//
+//                        return new Object[]{heap, studentsToRemoveInOrder}; // Return heap
+//                    },
+//                    (setupResult) -> { // Hacer las eliminaciones
+//                        @SuppressWarnings("unchecked")
+//                        MinHeap<Estudiante> heapToModify = (MinHeap<Estudiante>) ((Object[]) setupResult)[0];
+//                        @SuppressWarnings("unchecked")
+//                        LinkedList<Estudiante> studentsToActuallyRemove = (LinkedList<Estudiante>) ((Object[]) setupResult)[1];
+//
+//                        for (Estudiante estToRemove : studentsToActuallyRemove) {
+//                            heapToModify.remove(estToRemove);
+//                        }
+//                    }
+//            );
+
+
             runPerformanceTest(
-                    "INSERCIÓN",
-                    size,
-                    () -> { // Setup: Crear estudiantes
+                    "ADD",
+                    currentSize,
+                    () -> { // Setup: Generar los estudiantes a añadir
                         return generarEstudiantes(currentSize);
                     },
-                    (studentsToInsert) -> { // Operation: Insertar estudiantes en el heap
-                        MinHeap<Estudiante> heap = new MinHeap<>();
-                        for (Estudiante est : studentsToInsert) {
-                            heap.insert(est);
+                    (studentsToAdd) -> { // Operation: Añadir todos los estudiantes a una nueva HashTable
+                        HashTable<String, Estudiante> table = new HashTable<>();
+                        for (Estudiante est : studentsToAdd) {
+                            table.add(est.getId(), est);
                         }
                     }
             );
 
-            // Test ExtractMin
             runPerformanceTest(
-                    "EXTRAER MIN",
-                    size,
-                    () -> { // Setup
-                        MinHeap<Estudiante> heap = new MinHeap<>();
-                        for (Estudiante est : generarEstudiantes(currentSize)) {
-                            heap.insert(est);
-                        }
-                        return heap; // Retornar el heap con los elementos
-                    },
-                    (heapToExtract) -> { // Extraer
-                        while (!heapToExtract.isEmpty()) {
-                            heapToExtract.extractMin();
-                        }
-                    }
-            );
-
-            // Test PeekMin
-            runPerformanceTest(
-                    "PEEK MIN",
-                    size,
-                    () -> { // Setup
-                        MinHeap<Estudiante> heap = new MinHeap<>();
-                        for (Estudiante est : generarEstudiantes(currentSize)) {
-                            heap.insert(est);
-                        }
-                        return heap; // Retornar el heap con los elementos
-                    },
-                    (heapToPeek) -> { //Hacer el peek
-                        for (int k = 0; k < currentSize; k++) { // Hacer n peeks aunque sean redundantes
-                            heapToPeek.peekMin();
-                        }
-                    }
-            );
-
-
-
-            // Test Remove
-            runPerformanceTest(
-                    "ELIMINAR",
+                    "FIND",
                     currentSize,
-                    () -> { // Setup: Crear estudiantes
-                        MinHeap<Estudiante> heap = new MinHeap<>();
-                        LinkedList<Estudiante> allStudents = generarEstudiantes(currentSize); // Todos los estudiantes
-
-                        // insertar los estudiantes
+                    () -> { // Setup: Insertar todos los estudiantes en la tabla y preparar la lista de búsqueda
+                        HashTable<String, Estudiante> table = new HashTable<>();
+                        LinkedList<Estudiante> allStudents = generarEstudiantes(currentSize);
                         for (Estudiante est : allStudents) {
-                            heap.insert(est);
+                            table.add(est.getId(), est);
                         }
 
-                        LinkedList<Estudiante> studentsToRemoveInOrder = new LinkedList<>(allStudents);
-
-                        return new Object[]{heap, studentsToRemoveInOrder}; // Return heap
+                        return new Object[]{table, allStudents}; // Retornar la tabla y la lista para buscar
                     },
-                    (setupResult) -> { // Hacer las eliminaciones
+                    (setupResult) -> { // Operation: Buscar todos los estudiantes en la tabla
                         @SuppressWarnings("unchecked")
-                        MinHeap<Estudiante> heapToModify = (MinHeap<Estudiante>) ((Object[]) setupResult)[0];
+                        HashTable<String, Estudiante> table = (HashTable<String, Estudiante>) ((Object[]) setupResult)[0];
                         @SuppressWarnings("unchecked")
-                        LinkedList<Estudiante> studentsToActuallyRemove = (LinkedList<Estudiante>) ((Object[]) setupResult)[1];
+                        LinkedList<Estudiante> studentsToFind = (LinkedList<Estudiante>) ((Object[]) setupResult)[1];
 
-                        for (Estudiante estToRemove : studentsToActuallyRemove) {
-                            heapToModify.remove(estToRemove);
+                        for (Estudiante est : studentsToFind) {
+                            table.find(est.getId()); // Realizar la búsqueda
                         }
                     }
             );
+
+
+            runPerformanceTest(
+                    "REMOVE",
+                    currentSize,
+                    () -> { // Setup: Insertar todos los estudiantes en la tabla y preparar la lista de eliminación
+                        HashTable<String, Estudiante> table = new HashTable<>();
+                        LinkedList<Estudiante> allStudents = generarEstudiantes(currentSize);
+                        for (Estudiante est : allStudents) {
+                            table.add(est.getId(), est);
+                        }
+                        return new Object[]{table, allStudents}; // Retornar la tabla y la lista para eliminar
+                    },
+                    (setupResult) -> { // Operation: Eliminar todos los estudiantes de la tabla
+                        @SuppressWarnings("unchecked")
+                        HashTable<String, Estudiante> table = (HashTable<String, Estudiante>) ((Object[]) setupResult)[0];
+                        @SuppressWarnings("unchecked")
+                        LinkedList<Estudiante> studentsToRemove = (LinkedList<Estudiante>) ((Object[]) setupResult)[1];
+
+                        for (Estudiante est : studentsToRemove) {
+                            table.remove(est.getId()); // Realizar la eliminación
+                        }
+                    }
+            );
+
 
         }
     }
