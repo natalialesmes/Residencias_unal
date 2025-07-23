@@ -1,73 +1,68 @@
 package residencias.ui;
 
-//Panel para administrar los cupos de las residencias
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
-import residencias.logica.GestorEstudiantes;
-
-public class GestionCupos extends JFrame {
+public class GestionCupos extends JPanel {
 
     private JTextField campoCupos;
     private JButton btnAsignar;
-    private JLabel lblEstado;
-    private final GestorEstudiantes gestor;
+    private JTextArea areaResultado;
+    private RegistroEstudiantes registroPanel;
 
-    public GestionCupos(GestorEstudiantes gestor) {
-        this.gestor = gestor;
+    public GestionCupos(RegistroEstudiantes registroPanel) {
+        this.registroPanel = registroPanel;
 
-        setTitle("Gestión de Cupos");
-        setSize(350, 150);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(new FlowLayout());
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createTitledBorder("Gestión de Cupos"));
+        setBackground(Color.WHITE);
 
-        // Etiqueta + campo de texto
-        add(new JLabel("Cupos disponibles:"));
-        campoCupos = new JTextField(10);
-        add(campoCupos);
+        JPanel panelSuperior = new JPanel(new GridLayout(2, 2, 10, 10));
+        panelSuperior.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Botón de asignar
-        btnAsignar = new JButton("Asignar cupos");
-        add(btnAsignar);
+        campoCupos = new JTextField();
+        panelSuperior.add(new JLabel("Número de cupos:"));
+        panelSuperior.add(campoCupos);
 
-        // Etiqueta de estado
-        lblEstado = new JLabel();
-        add(lblEstado);
-
-        // Acción del botón
-        btnAsignar.addActionListener(e -> {
-            String texto = campoCupos.getText().trim();
-            try {
-                int cupos = Integer.parseInt(texto);
-                if (cupos <= 0) {
-                    mostrarMensaje("Ingrese un número mayor que cero.", Color.RED);
-                } else {
-                    gestor.asignarcupo(cupos);
-                    mostrarMensaje("Cupos asignados: " + cupos, Color.GREEN);
-                    campoCupos.setText(""); // Limpia el campo
-                }
-            } catch (NumberFormatException ex) {
-                mostrarMensaje("Ingrese un número válido.", Color.RED);
+        btnAsignar = new JButton("Asignar Residencias");
+        btnAsignar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                asignarCupos();
             }
         });
+
+        panelSuperior.add(new JLabel(""));
+        panelSuperior.add(btnAsignar);
+
+        areaResultado = new JTextArea();
+        areaResultado.setEditable(false);
+        areaResultado.setMargin(new Insets(10, 10, 10, 10));
+        areaResultado.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        JScrollPane scrollPane = new JScrollPane(areaResultado);
+
+        add(panelSuperior, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
     }
 
-    // Método auxiliar para mostrar mensajes de estado
-    private void mostrarMensaje(String mensaje, Color color) {
-        lblEstado.setText(mensaje);
-        lblEstado.setForeground(color);
-    }
+    private void asignarCupos() {
+        try {
+            int cupos = Integer.parseInt(campoCupos.getText().trim());
+            registroPanel.getGestor().asignarcupo(cupos);
+            int asignados = registroPanel.getGestor().asignarRes();
 
-    // Para pruebas individuales
-    public static void main(String[] args) {
-        GestorEstudiantes gestor = new GestorEstudiantes();
-        GestionCupos gestionCupos = new GestionCupos(gestor);
-        gestionCupos.setVisible(true);
+            areaResultado.setText("Residencias asignadas: " + asignados + " de " + cupos + " cupos disponibles.\n\n");
+            areaResultado.append("Estudiantes asignados:\n");
+
+            for (var est : registroPanel.getGestor().asignados()) {
+                areaResultado.append("- " + est.getNombre() + " (ID: " + est.getId() + ")\n");
+            }
+
+            registroPanel.actualizarTexto();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Ingrese un número válido para los cupos.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
