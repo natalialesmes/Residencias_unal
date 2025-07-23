@@ -55,7 +55,7 @@ public class RegistroEstudiantes extends JPanel {
         panelFormulario.add(new JLabel("Código:"));
         panelFormulario.add(campoCodigo);
 
-        panelFormulario.add(new JLabel("Promedio:"));
+        panelFormulario.add(new JLabel("Puntaje:"));
         panelFormulario.add(campoPromedio);
 
         JButton btnAgregar = new JButton("Agregar Estudiante");
