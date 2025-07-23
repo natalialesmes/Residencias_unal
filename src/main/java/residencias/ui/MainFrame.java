@@ -1,11 +1,23 @@
 package residencias.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Insets;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
+
+import residencias.logica.GestorEstudiantes;
 
 public class MainFrame extends JFrame {
 
+    private GestorEstudiantes gestor;
+
     public MainFrame() {
+        this.gestor = new GestorEstudiantes();
         setTitle("Sistema de Residencias UNAL");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -16,7 +28,7 @@ public class MainFrame extends JFrame {
         add(mainPanel);
 
         // Panel izquierdo: Formulario
-        RegistroEstudiantes registroPanel = new RegistroEstudiantes();
+        RegistroEstudiantes registroPanel = new RegistroEstudiantes(gestor);
         mainPanel.add(registroPanel);
 
         // Panel derecho: Información estática (Mockup)

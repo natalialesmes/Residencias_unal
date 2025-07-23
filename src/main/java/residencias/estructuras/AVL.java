@@ -1,5 +1,6 @@
 package residencias.estructuras;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 class NodoAVL {
     Estudiante estudiante;
@@ -56,7 +57,7 @@ public class AVL {
     private NodoAVL insertar(NodoAVL nodo, Estudiante est) {
         if (nodo == null) return new NodoAVL(est);
 
-        if (est.getPuntaje() < nodo.estudiante.getPuntaje())
+        if (est.getPuntaje() < nodo.estudiante.getPuntaje() || (est.getPuntaje() == nodo.estudiante.getPuntaje() && est.getId().compareTo(nodo.estudiante.getId()) < 0))
             nodo.izquierda = insertar(nodo.izquierda, est);
         else
             nodo.derecha = insertar(nodo.derecha, est);

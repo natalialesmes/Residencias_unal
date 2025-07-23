@@ -1,11 +1,12 @@
 package residencias.estructuras;
 
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 public class MinHeap<T extends Comparable<T>> { // <T extends Comparable<T>> asegura que T sea comparable
     private T[] elements; // Usamos Object[] para almacenar cualquier tipo T
     private int size;         // Número actual de elementos en el heap
-
+    private HashMap<T, Integer> indexMap;
     /**
      * Constructor para inicializar un MinHeap genérico con la capacidad por defecto (100).
      */
@@ -13,6 +14,7 @@ public class MinHeap<T extends Comparable<T>> { // <T extends Comparable<T>> ase
     public MinHeap() {
         elements = (T[]) new Comparable[100];
         size = 0;
+        indexMap = new HashMap<>(); // Mapa para rastrear los índices de los elementos
     }
 
     /**

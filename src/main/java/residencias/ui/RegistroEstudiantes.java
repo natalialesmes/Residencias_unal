@@ -1,10 +1,26 @@
 package residencias.ui;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent; // Importar GestorEstudiantes
+import java.awt.event.ActionListener; // Importar Estudiante principal
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import residencias.estructuras.Estudiante;
+import residencias.logica.GestorEstudiantes;
 
 public class RegistroEstudiantes extends JPanel {
 
@@ -12,13 +28,15 @@ public class RegistroEstudiantes extends JPanel {
     private JTextField campoCodigo;
     private JTextField campoPromedio;
     private JTextArea areaResultado;
+    private GestorEstudiantes gestor;
 
     // Lógica simple incorporada: usamos un MinHeap basado en promedio
     private PriorityQueue<Estudiante> minHeap;
 
-    public RegistroEstudiantes() {
+    public RegistroEstudiantes(GestorEstudiantes gestor) {
         setLayout(new BorderLayout());
         setBackground(new Color(240, 248, 255));
+        this.gestor = gestor;
 
         // Inicializar MinHeap (por promedio)
         minHeap = new PriorityQueue<>();
@@ -66,56 +84,43 @@ public class RegistroEstudiantes extends JPanel {
     private void agregarEstudiante() {
         String nombre = campoNombre.getText();
         String codigo = campoCodigo.getText();
-        double promedio;
+        int puntaje;
 
         try {
-            promedio = Double.parseDouble(campoPromedio.getText());
+            puntaje = Integer.parseInt(campoPromedio.getText());
 
             if (nombre.isEmpty() || codigo.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            Estudiante estudiante = new Estudiante(nombre, codigo, promedio);
-            minHeap.add(estudiante);
-            actualizarAreaResultado();
+            // Usar el método registro del gestor
+            if (gestor.registro(codigo, nombre, puntaje)) { // Pasar ID como primer argumento
+                JOptionPane.showMessageDialog(this, "Estudiante registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                actualizarAreaResultado(); // Actualizar la visualización
+                campoNombre.setText("");
+                campoCodigo.setText("");
+                campoPromedio.setText("");
+            } else {
+                JOptionPane.showMessageDialog(this, "Ya existe un estudiante con ese código.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
 
-            campoNombre.setText("");
-            campoCodigo.setText("");
-            campoPromedio.setText("");
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Promedio inválido. Debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Puntaje inválido. Debe ser un número entero.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void actualizarAreaResultado() {
         StringBuilder sb = new StringBuilder();
-        PriorityQueue<Estudiante> copia = new PriorityQueue<>(minHeap);
+        // Obtener la lista de estudiantes del gestor, ya ordenados por puntaje
+        LinkedList<Estudiante> estudiantesOrdenados = gestor.ordenados();
 
-        sb.append("Estudiantes registrados (ordenados por menor promedio):\n\n");
-        while (!copia.isEmpty()) {
-            Estudiante e = copia.poll();
-            sb.append(String.format("Nombre: %-15s Código: %-10s Promedio: %.2f\n", e.nombre, e.codigo, e.promedio));
+        sb.append("Estudiantes registrados (ordenados por menor puntaje):\n\n");
+        for (Estudiante e : estudiantesOrdenados) {
+            // Asegurarse de que los nombres de los atributos sean correctos (getId, getNombre, getPuntaje)
+            sb.append(String.format("Nombre: %-15s Código: %-10s Puntaje: %d\n", e.getNombre(), e.getId(), e.getPuntaje()));
         }
 
         areaResultado.setText(sb.toString());
-    }
-
-    // Clase interna para representar estudiantes
-    private static class Estudiante implements Comparable<Estudiante> {
-        String nombre;
-        String codigo;
-        double promedio;
-
-        public Estudiante(String nombre, String codigo, double promedio) {
-            this.nombre = nombre;
-            this.codigo = codigo;
-            this.promedio = promedio;
-        }
-
-        @Override
-        public int compareTo(Estudiante otro) {
-            return Double.compare(this.promedio, otro.promedio); // Orden ascendente por promedio
-        }
     }
 }

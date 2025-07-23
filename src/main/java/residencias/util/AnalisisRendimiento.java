@@ -1,16 +1,17 @@
 package residencias.util;
 
-import residencias.datos.AlmacenamientoArchivos;
-import residencias.estructuras.Estudiante;
-import residencias.estructuras.MinHeap;
-
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedList;
-
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import residencias.datos.AlmacenamientoArchivos;
+import residencias.estructuras.Estudiante;
+import residencias.estructuras.MinHeap;
 import static residencias.util.GeneradorMockData.generarEstudiantes;
 
 //Analisar el rendimiento como en el Taller
@@ -32,6 +33,14 @@ public class AnalisisRendimiento {
         }
         System.out.printf("Tiempo promedio de %s de %d estudiantes: %d milisegundos\n",
                 description, size, totalTime / 5);
+ 
+        try (PrintWriter writer = new PrintWriter(new FileWriter("resultados.csv", true))) {
+            writer.printf("%s,%d,%d\n", description, size, totalTime / 5);
+        } catch (IOException e) {
+            System.err.println("Error al escribir en el archivo CSV: " + e.getMessage());
+        }
+
+                
     }
 
 
@@ -49,7 +58,7 @@ public class AnalisisRendimiento {
             // Generar y persistir estudiantes
             LinkedList<Estudiante> estudiantes = generarEstudiantes(currentSize);
             AlmacenamientoArchivos archivos = new AlmacenamientoArchivos();
-            archivos.guardarEnCsv(estudiantes); // Persistencia opcional en tiempo de ejecución
+            archivos.guardar(estudiantes); // Persistencia opcional en tiempo de ejecución
 
             // Test Insert
             runPerformanceTest(
