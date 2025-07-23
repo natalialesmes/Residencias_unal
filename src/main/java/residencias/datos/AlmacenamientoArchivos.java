@@ -6,48 +6,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
 import residencias.estructuras.Estudiante;
 
 public class AlmacenamientoArchivos {
-    private static final String ARCHIVO_JSON = "estudiantes.json";
+
     private static final String ARCHIVO_CSV = "estudiantes.csv";
 
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-    // 🗃️ Guardar estudiantes en JSON
-    public boolean guardarEnJson(List<Estudiante> estudiantes) {
-        try (Writer writer = new FileWriter(ARCHIVO_JSON)) {
-            gson.toJson(estudiantes, writer);
-            return true;
-        } catch (IOException e) {
-            System.err.println("Error al guardar en JSON: " + e.getMessage());
-            return false;
-        }
-    }
-
-    // 📥 Cargar estudiantes desde JSON
-    public List<Estudiante> cargarDesdeJson() {
-        if (!Files.exists(Paths.get(ARCHIVO_JSON))) return new ArrayList<>();
-        try (Reader reader = new FileReader(ARCHIVO_JSON)) {
-            Type tipoLista = new TypeToken<List<Estudiante>>() {}.getType();
-            return gson.fromJson(reader, tipoLista);
-        } catch (IOException e) {
-            System.err.println("Error al cargar desde JSON: " + e.getMessage());
-            return new ArrayList<>();
-        }
-    }
 
     // 🗂️ Guardar estudiantes en CSV
     public boolean guardarEnCsv(List<Estudiante> estudiantes) {
